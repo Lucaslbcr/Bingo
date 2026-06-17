@@ -15,6 +15,7 @@ class Jogador
 }
 class Program
 {
+    //verificar se o número existe em cada coluna
     static bool NumeroExisteColuna(Cartela cartela, int numero, int coluna)
     {
         for (int i = 0; i < 5; i++)
@@ -28,6 +29,7 @@ class Program
     }
     static void Main()
     {
+        //quantidade de jogadores
       int qntdjogadores;
         do
         {
@@ -35,6 +37,8 @@ class Program
             qntdjogadores = int.Parse(Console.ReadLine());
         } while (qntdjogadores < 2 || qntdjogadores > 5);
         Jogador[] jogadores = new Jogador[qntdjogadores];
+
+        //cadastro dos jogadores
       for(int i=0; i<qntdjogadores; i++)
         {
             jogadores[i] = new Jogador();
@@ -48,6 +52,18 @@ class Program
             int qntdcartelas = int.Parse(Console.ReadLine());
             jogadores[i].cartelas = new Cartela[qntdcartelas];
         }
+
+        //preenchimento de cada cartela
+        for (int i=0; i<qntdjogadores; i++)
+        {
+            
+            for (int j=0; j<jogadores[i].cartelas.Length; j++)
+            {
+                jogadores[i].cartelas[j]=new Cartela();
+                GerarCartela(cartelas[j]);
+            }
+        }
+
     }
     static void GerarCartela(Cartela cartela)
     {
@@ -55,7 +71,7 @@ class Program
         Random rand = new Random();
         for (int i = 0; i < 5; i++)
         {
-            
+           //sorteio dos numeros com um intervalo para cada coluna. 
             for (int j = 0; j < 5; j++)
             {
                    if (i==2 && j==2)
@@ -107,9 +123,11 @@ class Program
                     }
                     cartela.numeros[i, j] = numero;
                 }
-              
             }
-        }
+        }   
+    }
+    static void MostrarCartela(Cartela cartela)
+    {
         
     }
     
