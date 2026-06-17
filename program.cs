@@ -5,7 +5,20 @@ class Jogo
 
     public int[] numsorteados = new int[75];
 
-    public int qntdsorteados;
+    public int qntdsorteados=0;
+
+    //metodo para sortear numeros do bingo
+     int SortearNumero()
+    {
+        Random NumBingo= new Random();
+        int NumeroAleatorio=0;
+        NumeroAleatorio=NumBingo.Next(1,76);
+        numsorteados[qntdsorteados]=NumeroAleatorio;
+        qntdsorteados++;
+        return NumeroAleatorio;
+    }
+
+
 }
 class Cartela
 {
@@ -46,7 +59,7 @@ class Program
     static void GerarCartela(Cartela cartela)
     {
         int numero;
-        Random rand = new Random();
+        Random NumeroCartela = new Random();
         for (int i = 0; i < 5; i++)
         {
            //sorteio dos numeros com um intervalo para cada coluna. 
@@ -58,46 +71,46 @@ class Program
                 }
                 if (j == 0)
                 {
-                    numero= rand.Next(1, 16);
+                    numero= NumeroCartela.Next(1, 16);
                     while (NumeroExisteColuna(cartela, numero, j))
                     {
-                        numero = rand.Next(1, 16);
+                        numero = NumeroCartela.Next(1, 16);
                     }
                     cartela.numeros[i, j] = numero;
                 }
                 if(j == 1)
                 {
-                    numero= rand.Next(16, 31);
+                    numero= NumeroCartela.Next(16, 31);
                     while (NumeroExisteColuna(cartela, numero, j))
                     {
-                        numero = rand.Next(16, 31);
+                        numero = NumeroCartela.Next(16, 31);
                     }
                     cartela.numeros[i, j] = numero;
                 }
                 if(j == 2)
                 {
-                    numero= rand.Next(31, 46);
+                    numero= NumeroCartela.Next(31, 46);
                     while (NumeroExisteColuna(cartela, numero, j))
                     {
-                        numero = rand.Next(31, 46);
+                        numero = NumeroCartela.Next(31, 46);
                     }
                     cartela.numeros[i, j] = numero;
                 }
                 if(j == 3)
                 {
-                    numero= rand.Next(46, 61);
+                    numero= NumeroCartela.Next(46, 61);
                     while (NumeroExisteColuna(cartela, numero, j))
                     {
-                        numero = rand.Next(46, 61);
+                        numero = NumeroCartela.Next(46, 61);
                     }
                     cartela.numeros[i, j] = numero;
                 }
                 if(j == 4)
                 {
-                    numero= rand.Next(61, 76);
+                    numero= NumeroCartela.Next(61, 76);
                     while (NumeroExisteColuna(cartela, numero, j))
                     {
-                        numero = rand.Next(61, 76);
+                        numero = NumeroCartela.Next(61, 76);
                     }
                     cartela.numeros[i, j] = numero;
                 }
