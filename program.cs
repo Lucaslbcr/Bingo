@@ -8,18 +8,34 @@ class Jogo
     public int qntdsorteados=0;
 
     //metodo para sortear numeros do bingo
-     int SortearNumero()
+    public int SortearNumero()
     {
         Random NumBingo= new Random();
         int NumeroAleatorio=0;
         NumeroAleatorio=NumBingo.Next(1,76);
+        while(VerificarNum(NumeroAleatorio))
+        {
+            NumeroAleatorio=NumBingo.Next(1,76);
+        }
         numsorteados[qntdsorteados]=NumeroAleatorio;
         qntdsorteados++;
         return NumeroAleatorio;
     }
-
-
+    //Verificar numero que foi sorteado se ele ja saiu antes
+    public bool VerificarNum(int numero)
+    {
+        for (int i=0;i<qntdsorteados;i++)
+        {
+            if(numsorteados[i]==numero)
+            {
+                return true;    
+            }
+        }
+        return false;
+    }
 }
+
+
 class Cartela
 {
     public int[,] numeros=new int [5,5];
@@ -52,7 +68,6 @@ class Program
         }
         return false;
     }
-    
 
 
 
@@ -127,16 +142,31 @@ class Program
         {
             for(int j=0; j<cartela.numeros.GetLength(1);j++)
             {
-                Console.Write(cartela[i,j] + "\t");
+                Console.Write(cartela.numeros[i,j] + "\t");
             }
             console.WriteLine();
         }   
     }
 
+    //Metodo para marcas os números na cartela
+    public void MarcarNumero(Cartela cartela,int numero)
+    {
+        for (int i=0; i<5; i++)
+        {
+            for (int j=0;j<5; j++)
+            {
+                if (cartela.numeros[i,j]==numero)
+                {
+                     cartela.numeros[i,j]=0;
+                }
+            }
+        }
+    }
 
 
 
-    class program;
+
+    
     //Verificar se as cartelas estão iguais ou não
     static bool CartelasIguais(Cartela c1, Cartela c2)
     {
@@ -204,8 +234,22 @@ class Program
                         }
                     }
                 }while(repetida);
-               
+
+               //Começo da partida
+               Jogo jogo=new Jogo();
+               jogo.jogadores=jogadores;
+               for (int i=0; i<5;i++)
+               {
+                    int numero=jogo.SortearNumero();
+                    Console.WriteLine("Numero Sorteado: " + numero);
+                    for (int j=0;j<jogadores.Length;j++)
+                    {
+                        for (int k=0;k<jogadores[j].cartelas.Length;k++)
+                        {
+                            MarcarNumero(jogadores[j].cartelas[k], numero);
+                        }
+                    }
+               }
             }
         }
-
     }
