@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace ConsoleApp1
 {
@@ -261,6 +262,7 @@ namespace ConsoleApp1
                     qntdcartelas = int.Parse(Console.ReadLine());
                 }
                 jogadores[i].cartelas = new Cartela[qntdcartelas];
+                MostrarCartela(jogadores[i].cartelas[j]);
             }
 
             //preenchimento de cada cartela
@@ -294,7 +296,7 @@ namespace ConsoleApp1
                 jogo.ranking = new Jogador[jogadores.Length];
                 jogo.PosicaoFim = jogadores.Length - 1;
                 int JogadoresAtivos = jogadores.Length;
-                while (JogadoresAtivos > 1 && jogo.PosicaoInicio + 1 < jogadores.Length)
+                while (JogadoresAtivos > 1)
                 {
 
                     {
@@ -377,11 +379,7 @@ namespace ConsoleApp1
                         //integração do VerificarBingo 
                         if (VerificarBingo(jogadores[JogadorEscolhido].cartelas[CartelaEscolhida]))
                         {
-                            if (jogadores[JogadorEscolhido].ativo == false)
-                            {
-                                Console.WriteLine("Jogador já finalizado.");
-                                continue;
-                            }
+                         
                             jogo.ranking[jogo.PosicaoInicio] = jogadores[JogadorEscolhido];
                             jogo.PosicaoInicio++;
                             Console.WriteLine("Parabens! Voce Bingou");
@@ -394,10 +392,20 @@ namespace ConsoleApp1
                         }
                         else
                         {
-                            if (jogadores[JogadorEscolhido].cartelas.Length > 1)
+                            int CartelasAtivas=0;
+                            for(int i=0; i<jogadores[JogadorEscolhido].cartelas.Length; i++)
+                            {
+                                if(jogadores[JogadorEscolhido].cartelas[i].anulada == false)
+                                {
+                                    CartelasAtivas++;
+                                }
+                            }
+                            if(CartelasAtivas>1)
                             {
                                 Console.WriteLine("Sua cartela foi anulada.");
-                                jogadores[JogadorEscolhido].cartelas[CartelaEscolhida].anulada = true;
+                                jogadores[JogadorEscolhido]
+                                .cartelas[CartelaEscolhida]
+                                .anulada = true;
                             }
                             else
                             {
