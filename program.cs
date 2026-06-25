@@ -295,12 +295,14 @@ namespace ConsoleApp1
                 jogo.jogadores = jogadores;
                 jogo.ranking = new Jogador[jogadores.Length];
                 jogo.PosicaoFim = jogadores.Length - 1;
+                StreamWritter log =new StreamWritter("log.txt", false, Encoding.UTF8);
                 int JogadoresAtivos = jogadores.Length;
                 while (JogadoresAtivos > 1)
                 {
 
                     {
                         int numero = jogo.SortearNumero();
+                        log.WriteLine("Número sorteado: " + numero);
                         Console.WriteLine("Numero Sorteado: " + numero);
                         for (int i = 0; i < jogadores.Length; i++)
                         {
@@ -376,13 +378,15 @@ namespace ConsoleApp1
                         }
                         CartelaEscolhida = CartelaEscolhida - 1;
 
-                        //integração do VerificarBingo 
+                        //integração do VerificarBingo
+                        log.WriteLine(jogadores[JogadorEscolhido].nome + " chamou bingo na cartela " + (CartelaEscolhida + 1));
                         if (VerificarBingo(jogadores[JogadorEscolhido].cartelas[CartelaEscolhida]))
                         {
                          
                             jogo.ranking[jogo.PosicaoInicio] = jogadores[JogadorEscolhido];
                             jogo.PosicaoInicio++;
                             Console.WriteLine("Parabens! Voce Bingou");
+                            log.WriteLine("BINGO CORRETO DO JOGADOR- " + jogadores[JogadorEscolhido].nome)
                             if (jogo.PosicaoInicio == 1)
                             {
                                 Console.WriteLine("Parabéns!! Você foi o campeão.");
@@ -406,13 +410,16 @@ namespace ConsoleApp1
                                 jogadores[JogadorEscolhido]
                                 .cartelas[CartelaEscolhida]
                                 .anulada = true;
+                                log.WriteLine("Cartela " + jogadores[JogadorEscolhido.cartelas[CartelaEscolhida]] + " anulada.")
                             }
                             else
                             {
                                 Console.WriteLine("Você foi eliminado.");
+                                log.WriteLine("Jogador " + jogadores[JogadorEscolhido] +" eliminado.")
                                 jogo.ranking[jogo.PosicaoFim] = jogadores[JogadorEscolhido];
                                 jogo.PosicaoFim--;
                                 jogadores[JogadorEscolhido].ativo = false;
+                                
                             }
                         }
 
@@ -432,13 +439,15 @@ namespace ConsoleApp1
                 }
                 //Impressão do ranking final
                 Console.WriteLine("-----------------------------------------\n RANKING FINAL");
+                log.WriteLine("RANKING FINAL:")
                 for (int i = 0; i < jogo.ranking.Length; i++)
                 {
                     if (jogo.ranking[i] != null)
                     {
                         Console.WriteLine((i + 1) + "º lugar: " + jogo.ranking[i].nome);
+                        log.WriteLine((i+1 ) + "° lugar " + jogo.ranking[i].nome);
                     }
-                }
+                }log.Close();
             }
         }
     }
