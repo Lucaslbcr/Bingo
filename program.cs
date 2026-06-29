@@ -2,8 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.IO;
+using System.Threading.Tasks;
+
 
 namespace ConsoleApp1
 {
@@ -113,6 +114,7 @@ namespace ConsoleApp1
                     if (i == 2 && j == 2)
                     {
                         cartela.numeros[i, j] = 0;
+                        continue;
                     }
                     if (j == 0)
                     {
@@ -195,8 +197,8 @@ namespace ConsoleApp1
         }
 
 
-    //Verificar se a pessoa realmente fez bingo
-    static bool VerificarBingo(Cartela cartela)
+        //Verificar se a pessoa realmente fez bingo
+        static bool VerificarBingo(Cartela cartela)
         {
             for (int i = 0; i < cartela.numeros.GetLength(0); i++)
             {
@@ -262,193 +264,268 @@ namespace ConsoleApp1
                     qntdcartelas = int.Parse(Console.ReadLine());
                 }
                 jogadores[i].cartelas = new Cartela[qntdcartelas];
-                MostrarCartela(jogadores[i].cartelas[j]);
+
             }
 
             //preenchimento de cada cartela
             for (int i = 0; i < qntdjogadores; i++)
             {
-
                 for (int j = 0; j < jogadores[i].cartelas.Length; j++)
                 {
                     jogadores[i].cartelas[j] = new Cartela();
+
                     bool repetida;
 
                     do
                     {
                         GerarCartela(jogadores[i].cartelas[j]);
                         repetida = false;
-                        for (int k = 0; k < j; k++)
+
+                        for (int x = 0; x <= i; x++)
                         {
-                            if (CartelasIguais(jogadores[i].cartelas[j], jogadores[i].cartelas[k]))
+                            for (int y = 0; y < jogadores[x].cartelas.Length; y++)
                             {
-                                repetida = true;
-                                break;
+
+                                if (x == i && y == j)
+                                    continue;
+
+
+                                if (jogadores[x].cartelas[y] != null &&
+                                    CartelasIguais(jogadores[i].cartelas[j], jogadores[x].cartelas[y]))
+                                {
+                                    repetida = true;
+                                    break;
+                                }
                             }
+
+                            if (repetida)
+                                break;
                         }
+
+
                     } while (repetida);
+
+
+                    Console.WriteLine("\nCartela " + (j + 1) +
+                                      " do jogador " + jogadores[i].nome);
+
+                    MostrarCartela(jogadores[i].cartelas[j]);
+                }
+            }
+            StreamWriter log = new StreamWriter("log.txt", true, Encoding.UTF8);
+            log.WriteLine("========== CARTELAS DOS JOGADORES ==========");
+
+            for (int i = 0; i < jogadores.Length; i++)
+            {
+                log.WriteLine("Jogador: " + jogadores[i].nome);
+
+                for (int j = 0; j < jogadores[i].cartelas.Length; j++)
+                {
+                    log.WriteLine("Cartela " + (j + 1) + ":");
+
+                    for (int linha = 0; linha < 5; linha++)
+                    {
+                        string linhaCartela = "";
+
+                        for (int coluna = 0; coluna < 5; coluna++)
+                        {
+                            linhaCartela += jogadores[i].cartelas[j].numeros[linha, coluna] + "\t";
+                        }
+
+                        log.WriteLine(linhaCartela);
+                    }
+
+                    log.WriteLine();
                 }
             }
 
-                //Começo da partida
-                Jogo jogo = new Jogo();
-                jogo.jogadores = jogadores;
-                jogo.ranking = new Jogador[jogadores.Length];
-                jogo.PosicaoFim = jogadores.Length - 1;
-                StreamWritter log =new StreamWritter("log.txt", false, Encoding.UTF8);
-                int JogadoresAtivos = jogadores.Length;
-                while (JogadoresAtivos > 1)
+            log.WriteLine("=============================================");
+
+            //Começo da partida
+            Jogo jogo = new Jogo();
+            jogo.jogadores = jogadores;
+            jogo.ranking = new Jogador[jogadores.Length];
+            jogo.PosicaoFim = jogadores.Length - 1;
+            
+            log.WriteLine("========== NOVA PARTIDA ==========");
+            log.WriteLine("Quantidade de jogadores: " + jogadores.Length);
+
+            for (int i = 0; i < jogadores.Length; i++)
+            {
+                log.WriteLine("Jogador " + (i + 1) + " - Nome: " + jogadores[i].nome + " | Idade: " + jogadores[i].idade + " | Sexo: " + jogadores[i].sexo + " | Cartelas: " + jogadores[i].cartelas.Length);
+            }
+            log.WriteLine("==================================");
+            int JogadoresAtivos = jogadores.Length;
+            while (JogadoresAtivos > 1)
+            {
+
                 {
-
-                    {
-                        int numero = jogo.SortearNumero();
-                        log.WriteLine("Número sorteado: " + numero);
-                        Console.WriteLine("Numero Sorteado: " + numero);
-                        for (int i = 0; i < jogadores.Length; i++)
-                        {
-                            if (jogadores[i].ativo)
-                            {
-                                for (int j = 0; j < jogadores[i].cartelas.Length; j++)
-                                {
-                                    jogo.MarcarNumero(jogadores[i].cartelas[j], numero);
-                                }
-                            }
-                        }
-                    }
-
-                    //Perguntar se alguem quer gritar bingo e verificar se o grito foi correto ou não
-                    string resposta;
-                    Console.WriteLine("Alguém deseja gritar bingo?(Digite sim ou não.)");
-                    resposta = Console.ReadLine();
-                    while (resposta == "sim")
-                    {
-                        Console.WriteLine("Digite o número do jogador.");
-                        for (int i = 0; i < jogadores.Length; i++)
-                        {
-                            Console.WriteLine("Jogador" + (i + 1) + "-" + jogadores[i].nome);
-                        }
-                        int JogadorEscolhido = int.Parse(Console.ReadLine());
-                        //Verificação de jogador
-                        while (JogadorEscolhido < 1 || JogadorEscolhido > jogadores.Length || jogadores[JogadorEscolhido - 1].ativo == false)
-                        {
-                            if (JogadorEscolhido >= 1 && JogadorEscolhido <= jogadores.Length && jogadores[JogadorEscolhido - 1].ativo == false)
-                            {
-                                Console.WriteLine("Este jogador não está mais ativo no jogo.");
-                                Console.WriteLine("Deseja escrever outro jogador para gritar bingo? (Digite sim ou não)");
-                                resposta = Console.ReadLine();
-                                if (resposta == "sim")
-                                {
-                                    Console.WriteLine("Digite o número do jogador.");
-                                    JogadorEscolhido = int.Parse(Console.ReadLine());
-                                }
-                                else { break; }
-                            }
-                            else
-                            {
-                                Console.WriteLine("Número Inválido. Digite Novamente.");
-                                JogadorEscolhido = int.Parse(Console.ReadLine());
-                            }
-
-                        }
-                        JogadorEscolhido = JogadorEscolhido - 1;
-
-                        //Verificação de cartela do jogador
-                        Console.WriteLine("Qual cartela deseja acessar?");
-                        int CartelaEscolhida = int.Parse(Console.ReadLine());
-
-                        while (CartelaEscolhida < 1 || CartelaEscolhida > jogadores[JogadorEscolhido].cartelas.Length || jogadores[JogadorEscolhido].cartelas[CartelaEscolhida - 1].anulada == true)
-                        {
-                            if (CartelaEscolhida >= 1 && CartelaEscolhida <= jogadores[JogadorEscolhido].cartelas.Length && jogadores[JogadorEscolhido].cartelas[CartelaEscolhida - 1].anulada == true)
-                            {
-                                Console.WriteLine("Essa cartela foi anulada");
-                                Console.WriteLine("Deseja escolher outra cartela?(sim ou não)");
-                                resposta = Console.ReadLine();
-                                if (resposta == "sim")
-                                {
-                                    Console.WriteLine("Digite o número da cartela");
-                                    CartelaEscolhida = int.Parse(Console.ReadLine());
-                                }
-                                else { break; }
-                            }
-                            else
-                            {
-                                Console.WriteLine("Você não tem essa cartela. Digite o número correto da cartela que deseja acessar");
-                                CartelaEscolhida = int.Parse(Console.ReadLine());
-                            }
-                        }
-                        CartelaEscolhida = CartelaEscolhida - 1;
-
-                        //integração do VerificarBingo
-                        log.WriteLine(jogadores[JogadorEscolhido].nome + " chamou bingo na cartela " + (CartelaEscolhida + 1));
-                        if (VerificarBingo(jogadores[JogadorEscolhido].cartelas[CartelaEscolhida]))
-                        {
-                         
-                            jogo.ranking[jogo.PosicaoInicio] = jogadores[JogadorEscolhido];
-                            jogo.PosicaoInicio++;
-                            Console.WriteLine("Parabens! Voce Bingou");
-                            log.WriteLine("BINGO CORRETO DO JOGADOR- " + jogadores[JogadorEscolhido].nome)
-                            if (jogo.PosicaoInicio == 1)
-                            {
-                                Console.WriteLine("Parabéns!! Você foi o campeão.");
-                            }
-
-                            jogadores[JogadorEscolhido].ativo = false;
-                        }
-                        else
-                        {
-                            int CartelasAtivas=0;
-                            for(int i=0; i<jogadores[JogadorEscolhido].cartelas.Length; i++)
-                            {
-                                if(jogadores[JogadorEscolhido].cartelas[i].anulada == false)
-                                {
-                                    CartelasAtivas++;
-                                }
-                            }
-                            if(CartelasAtivas>1)
-                            {
-                                Console.WriteLine("Sua cartela foi anulada.");
-                                jogadores[JogadorEscolhido]
-                                .cartelas[CartelaEscolhida]
-                                .anulada = true;
-                                log.WriteLine("Cartela " + jogadores[JogadorEscolhido.cartelas[CartelaEscolhida]] + " anulada.")
-                            }
-                            else
-                            {
-                                Console.WriteLine("Você foi eliminado.");
-                                log.WriteLine("Jogador " + jogadores[JogadorEscolhido] +" eliminado.")
-                                jogo.ranking[jogo.PosicaoFim] = jogadores[JogadorEscolhido];
-                                jogo.PosicaoFim--;
-                                jogadores[JogadorEscolhido].ativo = false;
-                                
-                            }
-                        }
-
-
-                        Console.WriteLine("Alguém deseja gritar bingo?(Digite sim ou não.)");
-                        resposta = Console.ReadLine();
-                    }
-                    //Jogadores Ativos
-                    JogadoresAtivos = 0;
+                    int numero = jogo.SortearNumero();
+                    log.WriteLine("Número sorteado: " + numero);
+                    Console.WriteLine("Numero Sorteado: " + numero);
                     for (int i = 0; i < jogadores.Length; i++)
                     {
                         if (jogadores[i].ativo)
                         {
-                            JogadoresAtivos++;
+                            for (int j = 0; j < jogadores[i].cartelas.Length; j++)
+                            {
+                                jogo.MarcarNumero(jogadores[i].cartelas[j], numero);
+                            }
                         }
                     }
                 }
-                //Impressão do ranking final
-                Console.WriteLine("-----------------------------------------\n RANKING FINAL");
-                log.WriteLine("RANKING FINAL:")
-                for (int i = 0; i < jogo.ranking.Length; i++)
+
+                //Perguntar se alguem quer gritar bingo e verificar se o grito foi correto ou não
+                string resposta;
+                if (JogadoresAtivos <= 1)
                 {
-                    if (jogo.ranking[i] != null)
+                    break;
+                }
+                Console.WriteLine("Alguém deseja gritar bingo?(Digite sim ou não.)");
+                resposta = Console.ReadLine();
+                while (resposta == "sim")
+                {
+                    Console.WriteLine("Digite o número do jogador.");
+                    for (int i = 0; i < jogadores.Length; i++)
                     {
-                        Console.WriteLine((i + 1) + "º lugar: " + jogo.ranking[i].nome);
-                        log.WriteLine((i+1 ) + "° lugar " + jogo.ranking[i].nome);
+                        Console.WriteLine("Jogador" + (i + 1) + "-" + jogadores[i].nome);
                     }
-                }log.Close();
+                    int JogadorEscolhido = int.Parse(Console.ReadLine());
+                    //Verificação de jogador
+                    while (JogadorEscolhido < 1 || JogadorEscolhido > jogadores.Length || jogadores[JogadorEscolhido - 1].ativo == false)
+                    {
+                        if (JogadorEscolhido >= 1 && JogadorEscolhido <= jogadores.Length && jogadores[JogadorEscolhido - 1].ativo == false)
+                        {
+                            Console.WriteLine("Este jogador não está mais ativo no jogo.");
+                            Console.WriteLine("Deseja escrever outro jogador para gritar bingo? (Digite sim ou não)");
+                            resposta = Console.ReadLine();
+                            if (resposta == "sim")
+                            {
+                                Console.WriteLine("Digite o número do jogador.");
+                                JogadorEscolhido = int.Parse(Console.ReadLine());
+                            }
+                            else { break; }
+                        }
+                        else
+                        {
+                            Console.WriteLine("Número Inválido. Digite Novamente.");
+                            JogadorEscolhido = int.Parse(Console.ReadLine());
+                        }
+
+                    }
+                    JogadorEscolhido--;
+
+                    //Verificação de cartela do jogador
+                    Console.WriteLine("Qual cartela deseja acessar?");
+                    int CartelaEscolhida = int.Parse(Console.ReadLine());
+
+                    while (CartelaEscolhida < 1 || CartelaEscolhida > jogadores[JogadorEscolhido].cartelas.Length || jogadores[JogadorEscolhido].cartelas[CartelaEscolhida - 1].anulada == true)
+                    {
+                        if (CartelaEscolhida >= 1 && CartelaEscolhida <= jogadores[JogadorEscolhido].cartelas.Length && jogadores[JogadorEscolhido].cartelas[CartelaEscolhida - 1].anulada == true)
+                        {
+                            Console.WriteLine("Essa cartela foi anulada");
+                            Console.WriteLine("Deseja escolher outra cartela?(sim ou não)");
+                            resposta = Console.ReadLine();
+                            if (resposta == "sim")
+                            {
+                                Console.WriteLine("Digite o número da cartela");
+                                CartelaEscolhida = int.Parse(Console.ReadLine());
+                            }
+                            else { break; }
+                        }
+                        else
+                        {
+                            Console.WriteLine("Você não tem essa cartela. Digite o número correto da cartela que deseja acessar");
+                            CartelaEscolhida = int.Parse(Console.ReadLine());
+                        }
+                    }
+                    CartelaEscolhida = CartelaEscolhida - 1;
+
+                    //integração do VerificarBingo
+                    log.WriteLine(jogadores[JogadorEscolhido].nome + " chamou bingo na cartela " + (CartelaEscolhida + 1));
+                    if (VerificarBingo(jogadores[JogadorEscolhido].cartelas[CartelaEscolhida]))
+                    {
+
+                        jogo.ranking[jogo.PosicaoInicio] = jogadores[JogadorEscolhido];
+                        jogo.PosicaoInicio++;
+                        Console.WriteLine("Parabens! Voce Bingou");
+                        log.WriteLine("BINGO CORRETO DO JOGADOR- " + jogadores[JogadorEscolhido].nome);
+                        if (jogo.PosicaoInicio == 1)
+                        {
+                            Console.WriteLine("Parabéns!! Você foi o campeão.");
+                        }
+
+                        jogadores[JogadorEscolhido].ativo = false;
+                    }
+                    else
+                    {
+                        int CartelasAtivas = 0;
+                        for (int i = 0; i < jogadores[JogadorEscolhido].cartelas.Length; i++)
+                        {
+                            if (jogadores[JogadorEscolhido].cartelas[i].anulada == false)
+                            {
+                                CartelasAtivas++;
+                            }
+                        }
+                        if (CartelasAtivas > 1)
+                        {
+                            Console.WriteLine("Sua cartela foi anulada.");
+                            jogadores[JogadorEscolhido].cartelas[CartelaEscolhida].anulada = true;
+                            log.WriteLine("Cartela " + jogadores[JogadorEscolhido].cartelas[CartelaEscolhida] + " anulada.");
+                        }
+                        else
+                        {
+                            Console.WriteLine("Você foi eliminado.");
+                            log.WriteLine("Jogador " + jogadores[JogadorEscolhido].nome + " eliminado.");
+                            jogo.ranking[jogo.PosicaoFim] = jogadores[JogadorEscolhido];
+                            jogo.PosicaoFim--;
+                            jogadores[JogadorEscolhido].ativo = false;
+
+                        }
+                    }
+
+
+                    Console.WriteLine("Alguém deseja gritar bingo?(Digite sim ou não.)");
+                    resposta = Console.ReadLine();
+                }
+                //Jogadores Ativos
+                JogadoresAtivos = 0;
+                for (int i = 0; i < jogadores.Length; i++)
+                {
+                    if (jogadores[i].ativo)
+                    {
+                        JogadoresAtivos++;
+                    }
+                }
+                if (JogadoresAtivos <= 1)
+                {
+                    break;
+                }
             }
+            //Adicionar último jogador restante no ranking
+            for (int i = 0; i < jogadores.Length; i++)
+            {
+                if (jogadores[i].ativo)
+                {
+                    jogo.ranking[jogo.PosicaoInicio] = jogadores[i];
+                    jogo.PosicaoInicio++;
+                }
+            }
+
+            //Impressão do ranking final
+            Console.WriteLine("-----------------------------------------\n RANKING FINAL");
+            log.WriteLine("RANKING FINAL:");
+            for (int i = 0; i < jogo.ranking.Length; i++)
+            {
+                if (jogo.ranking[i] != null)
+                {
+
+                    Console.WriteLine((i + 1) + "º lugar: " + jogo.ranking[i].nome + " | Idade: " + jogo.ranking[i].idade + " | Sexo: " + jogo.ranking[i].sexo);
+                    log.WriteLine((i + 1) + "º lugar: " + jogo.ranking[i].nome + " | Idade: " + jogo.ranking[i].idade + " | Sexo: " + jogo.ranking[i].sexo);
+                }
+            }
+            log.Close();
         }
     }
+}
 
