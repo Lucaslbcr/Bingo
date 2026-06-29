@@ -391,6 +391,7 @@ namespace ConsoleApp1
                         Console.WriteLine("Jogador" + (i + 1) + "-" + jogadores[i].nome);
                     }
                     int JogadorEscolhido = int.Parse(Console.ReadLine());
+                    bool continuarBingo = true;
                     //Verificação de jogador
                     while (JogadorEscolhido < 1 || JogadorEscolhido > jogadores.Length || jogadores[JogadorEscolhido - 1].ativo == false)
                     {
@@ -404,14 +405,21 @@ namespace ConsoleApp1
                                 Console.WriteLine("Digite o número do jogador.");
                                 JogadorEscolhido = int.Parse(Console.ReadLine());
                             }
-                            else { break; }
+                            else
+                            {
+                                continuarBingo = false;
+                                break;
+                            }
                         }
                         else
                         {
                             Console.WriteLine("Número Inválido. Digite Novamente.");
                             JogadorEscolhido = int.Parse(Console.ReadLine());
                         }
-
+                    }
+                    if (continuarBingo == false)
+                    {
+                        continue;
                     }
                     JogadorEscolhido--;
 
